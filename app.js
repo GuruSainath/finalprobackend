@@ -163,48 +163,43 @@ app.use('/formgenerateddata', function(request, response) {
   }
   else {
   var maindataset = request.body;
-  // var userformrequirements = {
-  //   key: maindataset.key,
-  //   values: [{
-  //     creatorName: maindataset.values.creatorName,
-  //     formName: maindataset.values.formName,
-  //     formDescription: maindataset.values.formDescription,
-  //     formgeneratedDate: maindataset.values.formgeneratedDate,
-  //     formgeneratedData: [{
-  //       _id: request.body.creatorName,
-  //       text: [{
-  //         _id: request.body.text
-  //       }],
-  //       textarea: [{
-  //         _id: request.body.textarea
-  //       }],
-  //       button: [{
-  //         _id: request.body.button
-  //       }],
-  //       checkbox: [{
-  //         _id: request.body.checkbox
-  //       }],
-  //       select: [{
-  //         _id: request.body.select
-  //       }]
-  //     }]
-  //   }]
-  // }
-
-  response.send(maindataset.key);
+  var userformrequirements = {
+    key: maindataset.key,
+    values: [{
+      creatorName: maindataset.values[0].creatorName,
+      formName: maindataset.values[0].formName,
+      formDescription: maindataset.values[0].formDescription,
+      formgeneratedDate: maindataset.values[0].formgeneratedDate,
+      formgeneratedData: [{
+        _id: maindataset.values[0].formName,
+        text: [{
+          _id: maindataset.values[0].formgeneratedData[0].text
+        }],
+        textarea: [{
+          _id: maindataset.values[0].formgeneratedData[0].textarea
+        }],
+        button: [{
+          _id: maindataset.values[0].formgeneratedData[0].button
+        }],
+        checkbox: [{
+          _id: maindataset.values[0].formgeneratedData[0].checkbox
+        }],
+        select: [{
+          _id: maindataset.values[0].formgeneratedData[0].select
+        }]
+      }]
+    }]
+  }
+  // response.send(userformrequirements);
   // console.log(maindataset);
-
-  //
   // var maindata = {
   //   creatorName: 'creatorName'
   // }
-  //
   // console.log(maindataset);
   // console.log(maindata);
   // response.send(maindataset);
   // response.send(userformrequirements);
   // dynamicregistrationmodule.findCreatorNameData(maindata , function(error, data) {
-
   //   if(data) {
   //     var datas = 'find collection';
   //     response.send(datas);
@@ -212,16 +207,16 @@ app.use('/formgenerateddata', function(request, response) {
   //   else {
   //     var datas = 'error';
   //     response.send(datas);
-      // dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
-      //   if(data) {
-      //     var datas = 'success';
-      //     response.send(datas);
-      //   }
-      //   else {
-      //     var datas = 'error';
-      //     response.send(datas + ' ' + error);
-      //   }
-      // });
+      dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
+        if(data) {
+          var datas = 'success';
+          response.send(datas);
+        }
+        else {
+          var datas = 'error';
+          response.send(datas + ' ' + error);
+        }
+      });
   //   }
   // });
 }
