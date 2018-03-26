@@ -46,6 +46,20 @@ app.use('/users', users);
 
 // ***** user defined code *****
 
+function accessControl(request, response) {
+  console.log('!OPTIONS');
+  var headers = {};
+  // IE8 does not allow domains to be specified, just the *
+  // headers["Access-Control-Allow-Origin"] = req.headers.origin;
+  headers["Access-Control-Allow-Origin"] = "*";
+  headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+  headers["Access-Control-Allow-Credentials"] = false;
+  headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+  headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
+  response.writeHead(200, headers);
+  response.end();
+}
+
 // mongo database connection
 mongoose.connect(url , function(error , db) {
   if(error) {
@@ -82,68 +96,80 @@ var mailcredentials = nodemailer.createTransport({
 
 // registration for every user
 app.use('/registration', function(request, response) {
-  var maindata= {
-    firstname: request.body.firstname,
-    lastname: request.body.lastname,
-    gmail: request.body.gmail,
-    password: request.body.password,
-    birthday: request.body.birthday,
-    gender: request.body.gender,
-    mobilenumber: request.body.mobilenumber,
-    nation: request.body.nation
+  if(request.method === 'OPTIONS') {
+    accessControl();
   }
-
-  var gmailvalidation = {
-    gmail:maindata.gmail,
-  }
-
-  registermodule.gmailcheck(gmailvalidation, function(error, data) {
-    if (data[0]) {
-      error="You already registered";
-      response.send(error);
-    } else {
-      registermodule.register(maindata, function(error, data) {
-        if(data) {
-          response.send('success');
-        }
-        else {
-          response.send('error');
-        }
-      });
+  else {
+    var maindata= {
+      firstname: request.body.firstname,
+      lastname: request.body.lastname,
+      gmail: request.body.gmail,
+      password: request.body.password,
+      birthday: request.body.birthday,
+      gender: request.body.gender,
+      mobilenumber: request.body.mobilenumber,
+      nation: request.body.nation
     }
+    var gmailvalidation = {
+      gmail:maindata.gmail,
+    }
+    registermodule.gmailcheck(gmailvalidation, function(error, data) {
+      if (data[0]) {
+        error="You already registered";
+        response.send(error);
+      } else {
+        registermodule.register(maindata, function(error, data) {
+          if(data) {
+            response.send('success');
+          }
+          else {
+            response.send('error');
+          }
+        });
+      }
     });
+  }
 });
 
 // login for every user
 app.use('/login', function(request, response) {
-  var logindata= {
-    gmail: request.body.gmail,
-    password: request.body.password
+  if(request.method === 'OPTIONS') {
+    accessControl();
   }
-  console.log(logindata);
-  console.log(logindata.gmail + " " + logindata.password);
-  registermodule.logincredentials(logindata, function(error, data) {
-    if(data) {
-      var success = 'success';
-      response.send(success);
+  else {
+    var logindata= {
+      gmail: request.body.gmail,
+      password: request.body.password
     }
-    else {
-      var error = 'error';
-      response.send(error);
-    }
-  });
+    console.log(logindata);
+    console.log(logindata.gmail + " " + logindata.password);
+    registermodule.logincredentials(logindata, function(error, data) {
+      if(data) {
+        var success = 'success';
+        response.send(success);
+      }
+      else {
+        var error = 'error';
+        response.send(error);
+      }
+    });
+  }
 });
 
 // creating the form and generate the basic requirements in USERFORM and userformdataobject
 app.use('/formgenerateddata', function(request, response) {
+  if(request.method === 'OPTIONS') {
+    accessControl(request, response);
+  }
+  else {
   var maindataset = request.body;
   // var userformrequirements = {
   //   key: maindataset.key,
   //   values: [{
-  //     creatorName: maindataset.creatorName,
-  //     formName: request.body.formName,
-  //     formDescription: request.body.formDescription,
-  //     formgeneratedDate: request.body.formgeneratedDate,
+  //     creatorName: maindataset.values.creatorName,
+  //     formName: maindataset.values.formName,
+  //     formDescription: maindataset.values.formDescription,
+  //     formgeneratedDate: maindataset.values.formgeneratedDate,
   //     formgeneratedData: [{
   //       _id: request.body.creatorName,
   //       text: [{
@@ -164,39 +190,17 @@ app.use('/formgenerateddata', function(request, response) {
   //     }]
   //   }]
   // }
-  var userformrequirements = {
-    key: 'maindataset.key',
-    values: [{
-      creatorName: 'maindataset.creatorName',
-      formName: 'request.body.formName',
-      formDescription: 'request.body.formDescription',
-      formgeneratedDate: 'request.body.formgeneratedDate',
-      formgeneratedData: [{
-        _id: 'request.body.creatorName',
-        text: [{
-          _id: 'request.body.text'
-        }],
-        textarea: [{
-          _id: 'request.body.textarea'
-        }],
-        button: [{
-          _id: 'request.body.textarea'
-        }],
-        checkbox: [{
-          _id: 'request.body.checkbox'
-        }],
-        select: [{
-          _id: 'request.body.select'
-        }]
-      }]
-    }]
-  }
-  var maindata = {
-    creatorName: 'creatorName'
-  }
 
-  console.log(maindataset);
-  console.log(maindata);
+  response.send(maindataset.key);
+  // console.log(maindataset);
+
+  //
+  // var maindata = {
+  //   creatorName: 'creatorName'
+  // }
+  //
+  // console.log(maindataset);
+  // console.log(maindata);
   // response.send(maindataset);
   // response.send(userformrequirements);
   // dynamicregistrationmodule.findCreatorNameData(maindata , function(error, data) {
@@ -208,18 +212,19 @@ app.use('/formgenerateddata', function(request, response) {
   //   else {
   //     var datas = 'error';
   //     response.send(datas);
-      dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
-        if(data) {
-          var datas = 'success';
-          response.send(datas);
-        }
-        else {
-          var datas = 'error';
-          response.send(datas + ' ' + error);
-        }
-      });
+      // dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
+      //   if(data) {
+      //     var datas = 'success';
+      //     response.send(datas);
+      //   }
+      //   else {
+      //     var datas = 'error';
+      //     response.send(datas + ' ' + error);
+      //   }
+      // });
   //   }
   // });
+}
 });
 
 // *****************************
