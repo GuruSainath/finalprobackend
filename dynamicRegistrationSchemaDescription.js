@@ -37,32 +37,27 @@ var descriptionschema = mongoose.Schema({
       },
       text: [{
         _id: {
-          type: String,
-          required: true
+          type: String
         }
       }],
       textarea: [{
         _id: {
-          type: String,
-          required: true
+          type: String
         }
       }],
       button: [{
         _id: {
-          type: String,
-          required: true
+          type: String
         }
       }],
       checkbox: [{
         _id: {
-          type: String,
-          required: true
+          type: String
         }
       }],
       select: [{
         _id: {
-          type: String,
-          required: true
+          type: String
         }
       }]
     }]
@@ -74,7 +69,17 @@ var descriptionmodel = module.exports = mongoose.model('descriptionmodel', descr
 
 // finding the userform already exists in the datbase or Not
 module.exports.findCreatorNameData = function(data, callback) {
-  descriptionmodel.findOne({creatorName : data.creatorName}, callback);
+  console.log(data)
+  descriptionmodel.findOne({key : data.key}, function(error, data) {
+    if(data) {
+        var datafield = data.values[0].creatorName;
+        descriptionmodel.findOne({datafield: data.formName}, callback);
+    }
+    else {
+        console.log('hahah');
+        callback();
+    }
+  });
 }
 
 // updating/creating description data in  to the table

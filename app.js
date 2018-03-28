@@ -162,64 +162,90 @@ app.use('/formgenerateddata', function(request, response) {
     accessControl(request, response);
   }
   else {
-  var maindataset = request.body;
-  var userformrequirements = {
-    key: maindataset.key,
-    values: [{
-      creatorName: maindataset.values[0].creatorName,
-      formName: maindataset.values[0].formName,
-      formDescription: maindataset.values[0].formDescription,
-      formgeneratedDate: maindataset.values[0].formgeneratedDate,
-      formgeneratedData: [{
-        _id: maindataset.values[0].formName,
-        text: [{
-          _id: maindataset.values[0].formgeneratedData[0].text
-        }],
-        textarea: [{
-          _id: maindataset.values[0].formgeneratedData[0].textarea
-        }],
-        button: [{
-          _id: maindataset.values[0].formgeneratedData[0].button
-        }],
-        checkbox: [{
-          _id: maindataset.values[0].formgeneratedData[0].checkbox
-        }],
-        select: [{
-          _id: maindataset.values[0].formgeneratedData[0].select
+    var maindataset = request.body;
+    var userformrequirements = {
+      key: maindataset.key,
+      values: [{
+        creatorName: maindataset.values[0].creatorName,
+        formName: maindataset.values[0].formName,
+        formDescription: maindataset.values[0].formDescription,
+        formgeneratedDate: maindataset.values[0].formgeneratedDate,
+        formgeneratedData: [{
+          _id: maindataset.values[0].formName,
+          text: [{
+            _id: JSON.stringify(maindataset.values[0].formgeneratedData[0].text)
+          }],
+          textarea: [{
+            _id: JSON.stringify(maindataset.values[0].formgeneratedData[0].textarea)
+          }],
+          button: [{
+            _id: JSON.stringify(maindataset.values[0].formgeneratedData[0].button)
+          }],
+          checkbox: [{
+            _id: JSON.stringify(maindataset.values[0].formgeneratedData[0].checkbox)
+          }],
+          select: [{
+            _id: JSON.stringify(maindataset.values[0].formgeneratedData[0].select)
+          }]
         }]
       }]
-    }]
+    }
+    var maindata = {
+      key: maindataset.key,
+      formName: maindataset.values[0].formName
+    }
+    console.log(maindata.formName +" "+ "haha");
+    dynamicregistrationmodule.findCreatorNameData(maindata, function(error, data) {
+      console.log('maindatasetmain');
+      if(data) {
+        var datas = 'form name does existing';
+        response.send(datas);
+      }
+      else {
+        // var datas = 'form name doesnot existing';
+        // response.send(datas);
+        dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
+          if(data) {
+            var datas = "success"
+            // var datas = data;
+            // var outputdatas = {
+            //   key: datas.key,
+            //   values: [{
+            //     creatorName: datas.values[0].creatorName,
+            //     formName: datas.values[0].formName,
+            //     formDescription: datas.values[0].formDescription,
+            //     formgeneratedDate: datas.values[0].formgeneratedDate,
+            //     formgeneratedData: [{
+            //       _id: datas.values[0].formName,
+            //       text: [{
+            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].text[0]._id)
+            //       }],
+            //       textarea: [{
+            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].textarea[0]._id)
+            //       }],
+            //       button: [{
+            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].button[0]._id)
+            //       }],
+            //       checkbox: [{
+            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].checkbox[0]._id)
+            //       }],
+            //       select: [{
+            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].select[0]._id)
+            //       }]
+            //     }]
+            //   }]
+            // }
+            // response.send(outputdatas);
+            response.send(datas);
+          }
+          else {
+            var datas = 'error';
+            response.send(datas + ' ' + error);
+          }
+        });
+      }
+    });
   }
-  // response.send(userformrequirements);
-  // console.log(maindataset);
-  // var maindata = {
-  //   creatorName: 'creatorName'
-  // }
-  // console.log(maindataset);
-  // console.log(maindata);
-  // response.send(maindataset);
-  // response.send(userformrequirements);
-  // dynamicregistrationmodule.findCreatorNameData(maindata , function(error, data) {
-  //   if(data) {
-  //     var datas = 'find collection';
-  //     response.send(datas);
-  //   }
-  //   else {
-  //     var datas = 'error';
-  //     response.send(datas);
-      dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
-        if(data) {
-          var datas = 'success';
-          response.send(datas);
-        }
-        else {
-          var datas = 'error';
-          response.send(datas + ' ' + error);
-        }
-      });
-  //   }
-  // });
-}
 });
 
 // *****************************
