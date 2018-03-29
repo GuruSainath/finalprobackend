@@ -96,64 +96,54 @@ var mailcredentials = nodemailer.createTransport({
 
 // registration for every user
 app.use('/registration', function(request, response) {
-  if(request.method === 'OPTIONS') {
-    accessControl();
+  var maindata= {
+    firstname: request.body.firstname,
+    lastname: request.body.lastname,
+    gmail: request.body.gmail,
+    password: request.body.password,
+    birthday: request.body.birthday,
+    gender: request.body.gender,
+    mobilenumber: request.body.mobilenumber,
+    nation: request.body.nation
   }
-  else {
-    var maindata= {
-      firstname: request.body.firstname,
-      lastname: request.body.lastname,
-      gmail: request.body.gmail,
-      password: request.body.password,
-      birthday: request.body.birthday,
-      gender: request.body.gender,
-      mobilenumber: request.body.mobilenumber,
-      nation: request.body.nation
-    }
-    var gmailvalidation = {
-      gmail:maindata.gmail,
-    }
-    registermodule.gmailcheck(gmailvalidation, function(error, data) {
-      if (data[0]) {
-        error="You already registered";
-        response.send(error);
-      } else {
-        registermodule.register(maindata, function(error, data) {
-          if(data) {
-            response.send('success');
-          }
-          else {
-            response.send('error');
-          }
-        });
-      }
-    });
+  var gmailvalidation = {
+    gmail:maindata.gmail,
   }
+  registermodule.gmailcheck(gmailvalidation, function(error, data) {
+    if (data[0]) {
+      error="You already registered";
+      response.send(error);
+    } else {
+      registermodule.register(maindata, function(error, data) {
+        if(data) {
+          response.send('success');
+        }
+        else {
+          response.send('error');
+        }
+      });
+    }
+  });
 });
 
 // login for every user
 app.use('/login', function(request, response) {
-  if(request.method === 'OPTIONS') {
-    accessControl();
+  var logindata= {
+    gmail: request.body.gmail,
+    password: request.body.password
   }
-  else {
-    var logindata= {
-      gmail: request.body.gmail,
-      password: request.body.password
+  console.log(logindata);
+  console.log(logindata.gmail + " " + logindata.password);
+  registermodule.logincredentials(logindata, function(error, data) {
+    if(data) {
+      var success = 'success';
+      response.send(success);
     }
-    console.log(logindata);
-    console.log(logindata.gmail + " " + logindata.password);
-    registermodule.logincredentials(logindata, function(error, data) {
-      if(data) {
-        var success = 'success';
-        response.send(success);
-      }
-      else {
-        var error = 'error';
-        response.send(error);
-      }
-    });
-  }
+    else {
+      var error = 'error';
+      response.send(error);
+    }
+  });
 });
 
 // creating the form and generate the basic requirements in USERFORM and userformdataobject
