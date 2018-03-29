@@ -207,35 +207,6 @@ app.use('/formgenerateddata', function(request, response) {
         dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
           if(data) {
             var datas = "success"
-            // var datas = data;
-            // var outputdatas = {
-            //   key: datas.key,
-            //   values: [{
-            //     creatorName: datas.values[0].creatorName,
-            //     formName: datas.values[0].formName,
-            //     formDescription: datas.values[0].formDescription,
-            //     formgeneratedDate: datas.values[0].formgeneratedDate,
-            //     formgeneratedData: [{
-            //       _id: datas.values[0].formName,
-            //       text: [{
-            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].text[0]._id)
-            //       }],
-            //       textarea: [{
-            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].textarea[0]._id)
-            //       }],
-            //       button: [{
-            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].button[0]._id)
-            //       }],
-            //       checkbox: [{
-            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].checkbox[0]._id)
-            //       }],
-            //       select: [{
-            //         _id: JSON.parse(datas.values[0].formgeneratedData[0].select[0]._id)
-            //       }]
-            //     }]
-            //   }]
-            // }
-            // response.send(outputdatas);
             response.send(datas);
           }
           else {
@@ -269,3 +240,34 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+
+// var datas = data;
+// var outputdatas = {
+//   key: datas.key,
+//   values: [{
+//     creatorName: datas.values[0].creatorName,
+//     formName: datas.values[0].formName,
+//     formDescription: datas.values[0].formDescription,
+//     formgeneratedDate: datas.values[0].formgeneratedDate,
+//     formgeneratedData: [{
+//       _id: datas.values[0].formName,
+//       text: [{
+//         _id: JSON.parse(datas.values[0].formgeneratedData[0].text[0]._id)
+//       }],
+//       textarea: [{
+//         _id: JSON.parse(datas.values[0].formgeneratedData[0].textarea[0]._id)
+//       }],
+//       button: [{
+//         _id: JSON.parse(datas.values[0].formgeneratedData[0].button[0]._id)
+//       }],
+//       checkbox: [{
+//         _id: JSON.parse(datas.values[0].formgeneratedData[0].checkbox[0]._id)
+//       }],
+//       select: [{
+//         _id: JSON.parse(datas.values[0].formgeneratedData[0].select[0]._id)
+//       }]
+//     }]
+//   }]
+// }
+// response.send(outputdatas);
