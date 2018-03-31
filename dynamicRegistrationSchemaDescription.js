@@ -67,19 +67,15 @@ var descriptionschema = mongoose.Schema({
 // creating a model to the schema
 var descriptionmodel = module.exports = mongoose.model('descriptionmodel', descriptionschema);
 
-// finding the userform already exists in the datbase or Not
-module.exports.findCreatorNameData = function(data, callback) {
-  console.log(data)
-  descriptionmodel.findOne({key : data.key}, function(error, data) {
-    if(data) {
-        var datafield = data.values[0].creatorName;
-        descriptionmodel.findOne({datafield: data.formName}, callback);
-    }
-    else {
-        console.log('hahah');
-        callback();
-    }
-  });
+//finding formname already exists or not
+module.exports.findformnamedata = function(data, callback) {
+  console.log(data);
+  descriptionmodel.findOne({key : data.username}, callback);
+}
+
+module.exports.findoutputdata = function(data, callback) {
+  console.log(data);
+  descriptionmodel.findOne({key: data.name}, callback);
 }
 
 // updating/creating description data in  to the table

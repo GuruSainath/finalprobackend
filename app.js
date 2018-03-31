@@ -146,6 +146,35 @@ app.use('/login', function(request, response) {
   });
 });
 
+// formname checking in the database
+app.use('/formcheckdata', function(request, response) {
+  if(request.method === 'OPTIONS') {
+    accessControl(request, response);
+  }
+  else {
+    var maindataset = {
+      formname: request.body.formname,
+      username: request.body.username
+    }
+    dynamicregistrationmodule.findformnamedata(maindataset, function(error, data) {
+      if(data) {
+        if(data.values[0].formName == maindataset.formname) {
+          var error = 'error';
+          response.send(error);
+        }
+        else {
+          var success = 'success';
+          response.send(success);
+        }
+      }
+      else {
+        var chaos="not find";
+        response.send(chaos);
+      }
+    });
+  }
+});
+
 // creating the form and generate the basic requirements in USERFORM and userformdataobject
 app.use('/formgenerateddata', function(request, response) {
   if(request.method === 'OPTIONS') {
@@ -180,31 +209,29 @@ app.use('/formgenerateddata', function(request, response) {
         }]
       }]
     }
-    var maindata = {
-      key: maindataset.key,
-      formName: maindataset.values[0].formName
-    }
-    console.log(maindata.formName +" "+ "haha");
-    dynamicregistrationmodule.findCreatorNameData(maindata, function(error, data) {
-      console.log('maindatasetmain');
+    dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
       if(data) {
-        var datas = 'form name does existing';
+        var datas = "success"
         response.send(datas);
       }
       else {
-        // var datas = 'form name doesnot existing';
-        // response.send(datas);
-        dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
-          if(data) {
-            var datas = "success"
-            response.send(datas);
-          }
-          else {
-            var datas = 'error';
-            response.send(datas + ' ' + error);
-          }
-        });
+        var datas = 'error';
+        response.send(datas + ' ' + error);
       }
+    });
+  }
+});
+
+app.use('/formgenerateddataoutput', function(request, response) {
+  if(request.method === 'OPTIONS') {
+    accessControl(request, response);
+  }
+  else {
+    var maindataset = {
+      name: request.body.name
+    }
+    dynamicregistrationmodule.findoutputdata(maindataset, function(error, data) {
+      response.send(data);
     });
   }
 });
