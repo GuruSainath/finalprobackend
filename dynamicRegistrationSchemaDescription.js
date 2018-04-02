@@ -64,21 +64,25 @@ var descriptionschema = mongoose.Schema({
   }]
 });
 
-// creating a model to the schema
 var descriptionmodel = module.exports = mongoose.model('descriptionmodel', descriptionschema);
+
+// updating/creating description data in  to the table
+module.exports.createData = function(data, callback) {
+  descriptionmodel.create(data, callback);
+}
 
 //finding formname already exists or not
 module.exports.findformnamedata = function(data, callback) {
   console.log(data);
   descriptionmodel.findOne({key : data.username}, callback);
 }
-
-module.exports.findoutputdata = function(data, callback) {
+module.exports.updatedatatoexistinguser = function(data, callback) {
   console.log(data);
-  descriptionmodel.findOne({key: data.name}, callback);
+  var insertiondata = data.mainsetdata[0];
+  descriptionmodel.update({key: data.key}, {$addToSet: {values: insertiondata}}, callback);
 }
 
-// updating/creating description data in  to the table
-module.exports.createData = function(data, callback) {
-  descriptionmodel.create(data, callback);
+// updating a table information for already existed user createdatauser
+module.exports.findandaddusernamedata = function(data, callback) {
+  descriptionmodel.findOne({key : data.key}, callback);
 }

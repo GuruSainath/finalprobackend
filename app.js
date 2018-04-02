@@ -146,6 +146,7 @@ app.use('/login', function(request, response) {
   });
 });
 
+var customvariable = 'onedata';
 // formname checking in the database
 app.use('/formcheckdata', function(request, response) {
   if(request.method === 'OPTIONS') {
@@ -168,8 +169,9 @@ app.use('/formcheckdata', function(request, response) {
         }
       }
       else {
-        var chaos="not find";
+        var chaos="notFind";
         response.send(chaos);
+        customvariable = 'twodata';
       }
     });
   }
@@ -209,16 +211,45 @@ app.use('/formgenerateddata', function(request, response) {
         }]
       }]
     }
-    dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
-      if(data) {
-        var datas = "success"
-        response.send(datas);
-      }
-      else {
-        var datas = 'error';
-        response.send(datas + ' ' + error);
-      }
-    });
+    console.log(customvariable);
+    if(customvariable === 'twodata') {
+      dynamicregistrationmodule.createData(userformrequirements, function(error, data) {
+        if(data) {
+          var datas = "success"
+          response.send(datas);
+        }
+        else {
+          var datas = 'error';
+          response.send(datas + ' ' + error);
+        }
+      });
+      customvariable = 'onedata';
+    }
+    else {
+      // response.send(userformrequirements);
+      dynamicregistrationmodule.findandaddusernamedata(userformrequirements, function(error, data) {
+        if(data) {
+          var mainsetoutputdata = {
+            key: userformrequirements.key,
+            mainsetdata: userformrequirements.values
+          }
+          dynamicregistrationmodule.updatedatatoexistinguser(mainsetoutputdata, function(error, data){
+            if(data) {
+              var chaos="entered";
+              response.send(chaos);
+            }
+            else {
+              var chaos="not entered";
+              response.send(chaos);
+            }
+          });
+        }
+        else {
+          var chaos="not found";
+          response.send(chaos);
+        }
+      });
+    }
   }
 });
 
@@ -228,10 +259,48 @@ app.use('/formgenerateddataoutput', function(request, response) {
   }
   else {
     var maindataset = {
-      name: request.body.name
+      key: request.body.name,
+      formname: request.body.form
     }
-    dynamicregistrationmodule.findoutputdata(maindataset, function(error, data) {
-      response.send(data);
+    var flag = false;
+    dynamicregistrationmodule.findandaddusernamedata(maindataset, function(error, data) {
+      var length = data.values.length;
+      for(var i=0; i<length; i=i+1) {
+        console.log(maindataset.formname + ' ' + data.values[i].formName);
+        if(maindataset.formname == data.values[i].formName) {
+          console.log(i);
+          var datas = data;
+          var outputdatas = {
+            key: datas.key,
+            values: [{
+              creatorName: datas.values[i].creatorName,
+              formName: datas.values[i].formName,
+              formDescription: datas.values[i].formDescription,
+              formgeneratedDate: datas.values[i].formgeneratedDate,
+              formgeneratedData: [{
+                _id: datas.values[i].formName,
+                text: [{
+                  _id: JSON.parse(datas.values[i].formgeneratedData[0].text[0]._id)
+                }],
+                textarea: [{
+                  _id: JSON.parse(datas.values[i].formgeneratedData[0].textarea[0]._id)
+                }],
+                button: [{
+                  _id: JSON.parse(datas.values[i].formgeneratedData[0].button[0]._id)
+                }],
+                checkbox: [{
+                  _id: JSON.parse(datas.values[i].formgeneratedData[0].checkbox[0]._id)
+                }],
+                select: [{
+                  _id: JSON.parse(datas.values[i].formgeneratedData[0].select[0]._id)
+                }]
+              }]
+            }]
+          }
+          var finaloutput = outputdatas.values[0].formgeneratedData[0]
+        }
+      }
+      response.send(finaloutput);
     });
   }
 });
@@ -257,34 +326,3 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-
-
-// var datas = data;
-// var outputdatas = {
-//   key: datas.key,
-//   values: [{
-//     creatorName: datas.values[0].creatorName,
-//     formName: datas.values[0].formName,
-//     formDescription: datas.values[0].formDescription,
-//     formgeneratedDate: datas.values[0].formgeneratedDate,
-//     formgeneratedData: [{
-//       _id: datas.values[0].formName,
-//       text: [{
-//         _id: JSON.parse(datas.values[0].formgeneratedData[0].text[0]._id)
-//       }],
-//       textarea: [{
-//         _id: JSON.parse(datas.values[0].formgeneratedData[0].textarea[0]._id)
-//       }],
-//       button: [{
-//         _id: JSON.parse(datas.values[0].formgeneratedData[0].button[0]._id)
-//       }],
-//       checkbox: [{
-//         _id: JSON.parse(datas.values[0].formgeneratedData[0].checkbox[0]._id)
-//       }],
-//       select: [{
-//         _id: JSON.parse(datas.values[0].formgeneratedData[0].select[0]._id)
-//       }]
-//     }]
-//   }]
-// }
-// response.send(outputdatas);
