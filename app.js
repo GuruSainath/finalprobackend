@@ -26,6 +26,7 @@ var url = 'mongodb://localhost:27017/finalprodatabase';
 // creating an instance of the registration schema
 var registermodule = require('./Registrationschema');
 var dynamicregistrationmodule = require('./dynamicRegistrationSchemaDescription');
+var datastoremodule = require('./formdatastoring');
 
 // *****************************
 
@@ -266,9 +267,7 @@ app.use('/formgenerateddataoutput', function(request, response) {
     dynamicregistrationmodule.findandaddusernamedata(maindataset, function(error, data) {
       var length = data.values.length;
       for(var i=0; i<length; i=i+1) {
-        console.log(maindataset.formname + ' ' + data.values[i].formName);
         if(maindataset.formname == data.values[i].formName) {
-          console.log(i);
           var datas = data;
           var outputdatas = {
             key: datas.key,
@@ -297,10 +296,56 @@ app.use('/formgenerateddataoutput', function(request, response) {
               }]
             }]
           }
-          var finaloutput = outputdatas.values[0].formgeneratedData[0]
+          var finaloutput = outputdatas.values[0]
         }
       }
       response.send(finaloutput);
+    });
+  }
+});
+
+app.use('/datafromenduser', function(request, response) {
+  if(request.method === 'OPTIONS') {
+    accessControl(request, response);
+  }
+  else {
+    var endusermaindata = request.body;
+    var mainstringdata = {
+      key: endusermaindata.username+''+endusermaindata.formname
+    }
+    datastoremodule.findformdataisregisteredornot(mainstringdata, function(error, data) {
+      if(data) {
+        var maintheme = {
+          key: mainstringdata.key,
+          data: JSON.stringify(endusermaindata.data[0])
+        }
+        datastoremodule.updatedatatoexistingregform(maintheme, function(error, data) {
+          if(data) {
+            var datas = "success"
+            response.send(datas);
+          }
+          else {
+            var datas = "error"
+            response.send(datas);
+          }
+        });
+      }
+      else {
+        var maintheme = {
+          key: mainstringdata.key,
+          data: JSON.stringify(endusermaindata.data[0])
+        }
+        datastoremodule.createenduserData(maintheme, function(error, data) {
+          if(data) {
+            var datas = "success"
+            response.send(datas);
+          }
+          else {
+            var datas = "error"
+            response.send(datas);
+          }
+        });
+      }
     });
   }
 });

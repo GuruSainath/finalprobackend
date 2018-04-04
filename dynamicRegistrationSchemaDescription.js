@@ -9,7 +9,7 @@ var descriptionschema = mongoose.Schema({
   },
   // user form data will be stored in this values and for single user number of forms can in stored here
   values:[{
-    // user / creator naem
+    // user / creator name
     creatorName: {
       type: String,
       required: true
