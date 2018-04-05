@@ -317,7 +317,7 @@ app.use('/datafromenduser', function(request, response) {
       if(data) {
         var maintheme = {
           key: mainstringdata.key,
-          data: JSON.stringify(endusermaindata.data[0])
+          datavalues: JSON.stringify(endusermaindata.data[0])
         }
         datastoremodule.updatedatatoexistingregform(maintheme, function(error, data) {
           if(data) {
@@ -333,7 +333,7 @@ app.use('/datafromenduser', function(request, response) {
       else {
         var maintheme = {
           key: mainstringdata.key,
-          data: JSON.stringify(endusermaindata.data[0])
+          datavalues: JSON.stringify(endusermaindata.data[0])
         }
         datastoremodule.createenduserData(maintheme, function(error, data) {
           if(data) {

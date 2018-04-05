@@ -8,7 +8,7 @@ var enduserschema = mongoose.Schema({
     required: true
   },
   // user registered data will be stored in this values and for single user number of forms can in stored here
-  data:[{
+  datavalues: [{
     type: String,
     required: true
   }]
@@ -28,7 +28,6 @@ module.exports.createenduserData = function(data, callback) {
 
 // updating registered data  in  to the table
 module.exports.updatedatatoexistingregform = function(data, callback) {
-  console.log(data);
-  var insertiondata = data.data[0];
-  userformregdata.update({key: data.key}, {$addToSet: {data: insertiondata}}, callback);
+  var insertingdata = data.datavalues
+  userformregdata.update({key: data.key}, {$addToSet: {datavalues: insertingdata}}, callback);
 }
