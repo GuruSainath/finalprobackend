@@ -40,15 +40,10 @@ var registrationdata = mongoose.Schema({
 // compiling schema into the model
 var registerdata  = module.exports = mongoose.model('registerdata', registrationdata);
 
-// **********************making actions in the database*************************
-
 // checking the gmail that to decrese the duplication of the data
 module.exports.gmailcheck = function(data, callback) {
 	registerdata.find({gmail : data.gmail}, callback);
 };
-
-
-// ********** validating the cresentials like registration and login ***********
 
 // inserting the data into database registrationdata
 module.exports.register = function(data, callback) {
@@ -59,4 +54,5 @@ module.exports.register = function(data, callback) {
 module.exports.logincredentials = function(data, callback) {
 	registerdata.findOne({gmail : data.gmail, password : data.password}, callback);
 };
-// *****************************************************************************
+
+//  checkig the data for the username

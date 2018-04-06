@@ -73,11 +73,9 @@ module.exports.createData = function(data, callback) {
 
 //finding formname already exists or not
 module.exports.findformnamedata = function(data, callback) {
-  console.log(data);
   descriptionmodel.findOne({key : data.username}, callback);
 }
 module.exports.updatedatatoexistinguser = function(data, callback) {
-  console.log(data);
   var insertiondata = data.mainsetdata[0];
   descriptionmodel.update({key: data.key}, {$addToSet: {values: insertiondata}}, callback);
 }

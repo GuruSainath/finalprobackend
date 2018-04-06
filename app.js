@@ -108,7 +108,7 @@ app.use('/registration', function(request, response) {
     nation: request.body.nation
   }
   var gmailvalidation = {
-    gmail:maindata.gmail,
+    gmail: maindata.gmail,
   }
   registermodule.gmailcheck(gmailvalidation, function(error, data) {
     if (data[0]) {
@@ -117,10 +117,12 @@ app.use('/registration', function(request, response) {
     } else {
       registermodule.register(maindata, function(error, data) {
         if(data) {
-          response.send('success');
+          var success = 'success'
+          response.send(success);
         }
         else {
-          response.send('error');
+          var error = 'error'
+          response.send(error);
         }
       });
     }
@@ -350,6 +352,68 @@ app.use('/datafromenduser', function(request, response) {
   }
 });
 
+//  getting the data how many responses are came and retriving the data
+app.use('/alltheresponses', function(request, response) {
+  if(request.method === 'OPTIONS') {
+    accessControl(request, response);
+  }
+  else {
+    var endusermaindata = request.body;
+    var mainstringdata = {
+      key: endusermaindata.name+''+endusermaindata.form
+    }
+    datastoremodule.findformdataisregisteredornot(mainstringdata, function(error, data) {
+      if(data) {
+        var length = data.datavalues.length;
+        var mainarray = [];
+        for(var i = 0; i < length; i = i + 1) {
+          var datas = data;
+          mainarray.push(JSON.parse(datas.datavalues[i]));
+        }
+        var maindatasetoutput = {
+          key: datas.key,
+          datavalues: mainarray
+        }
+        response.send(data)
+      }
+      else {
+        var error = 'error'
+        response.send(error)
+      }
+    });
+  }
+});
+
+// data getting form here is to build the home page
+app.use('/gettingtheusername', function(request, response) {
+  var gmailvalidation = {
+    gmail: request.body.gmail,
+  }
+  registermodule.gmailcheck(gmailvalidation, function(error, data) {
+    if (data) {
+      response.send(data)
+    }
+    else {
+      var error = 'error'
+      response.send(error)
+    }
+  });
+});
+
+app.use('/gettingtheformdata', function(request, response) {
+  var gettingnamedata = {
+    key: request.body.key,
+  }
+  dynamicregistrationmodule.findandaddusernamedata(gettingnamedata, function(error, data) {
+    if (data) {
+      response.send(data)
+    }
+    else {
+      var error = 'error'
+      response.send(error)
+    }
+  });
+});
 // *****************************
 
 // catch 404 and forward to error handler
